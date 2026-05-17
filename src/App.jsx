@@ -4,6 +4,7 @@ import ParentView from './ParentView';
 import ChildView from './ChildView';
 import PinModal from './PinModal';
 import Celebration from './Celebration';
+import { playReward } from './sounds';
 import './App.css';
 
 const PARENT_TABS = [
@@ -13,8 +14,9 @@ const PARENT_TABS = [
 ];
 
 const CHILD_TABS = [
-  { id: 'tasks',   label: 'Today',   emoji: '✅' },
-  { id: 'rewards', label: 'Rewards', emoji: '🎁' },
+  { id: 'tasks',    label: 'Today',    emoji: '⭐' },
+  { id: 'rewards',  label: 'Prizes',   emoji: '🎁' },
+  { id: 'trophies', label: 'Trophies', emoji: '🏆' },
 ];
 
 export default function App() {
@@ -41,6 +43,7 @@ export default function App() {
   function handleClaim(reward) {
     store.claimReward(reward);
     setCelebration(reward);
+    playReward();
   }
 
   return (
@@ -56,37 +59,37 @@ export default function App() {
         <Celebration reward={celebration} onClose={() => setCelebration(null)} />
       )}
 
-      {/* ── Sidebar / Header ── */}
       <aside className="sidebar">
         <div className="sidebar-inner">
 
           <div className="brand-row">
             <div className="brand">
-              <span className="brand-icon">⭐</span>
+              <span className="brand-icon">{isParent ? '📋' : '✨'}</span>
               <div>
                 <div className="app-title">
-                  {isParent ? 'Parent Dashboard' : 'Homework Hero'}
+                  {isParent ? 'Parent Dashboard' : 'Hi Iris! ✨'}
                 </div>
                 <div className="app-subtitle">
                   {isParent
                     ? 'Manage tasks & rewards'
-                    : new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })}
+                    : new Date().toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}
                 </div>
               </div>
             </div>
             <button className="mode-toggle" onClick={handleModeToggle}>
-              {isParent ? '👦 Child' : '🔒 Parent'}
+              {isParent ? '⬅️ Iris' : '🔒 Parent'}
             </button>
           </div>
 
           {!isParent && (
             <div className="points-banner">
-              <div className="points-value">{store.totalPoints}</div>
-              <div className="points-meta">
-                <span className="points-label">Total Points</span>
-                <span className="points-sub">
-                  {store.completedToday.length} / {store.tasks.length} tasks done today
-                </span>
+              <div className="star-badge">
+                <div className="points-value">{store.totalPoints}</div>
+                <div className="points-label">⭐ Stars</div>
+              </div>
+              <div className="streak-badge">
+                <div className="streak-value">{store.streak}</div>
+                <div className="streak-label">🔥 Day Streak</div>
               </div>
             </div>
           )}
@@ -107,7 +110,6 @@ export default function App() {
         </div>
       </aside>
 
-      {/* ── Content Panel ── */}
       <div className="content-panel">
         {isParent
           ? <ParentView tab={tab} store={store} />

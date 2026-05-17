@@ -163,16 +163,16 @@ function RewardManager({ store }) {
       </div>
 
       <div className="card">
-        <div className="section-title">🏅 Claimed Rewards</div>
+        <div className="section-title">🏅 Prize History</div>
         {store.claimedRewards.length === 0 ? (
           <div className="empty" style={{ padding: '12px 0' }}>
-            <span style={{ color: 'var(--text-muted)', fontSize: 14 }}>No rewards claimed yet</span>
+            <span style={{ color: 'var(--text-muted)', fontSize: 14 }}>No prizes claimed yet</span>
           </div>
         ) : [...store.claimedRewards].reverse().map((c, i) => (
           <div key={i} className="history-entry">
-            <span>{c.rewardName}</span>
+            <span>{c.icon} {c.rewardName}</span>
             <div style={{ textAlign: 'right' }}>
-              <div className="badge badge-gold">−{c.pointsSpent} pts</div>
+              <div className="badge badge-gold">{c.pointsSpent} ⭐ spent</div>
               <div className="history-date">{c.date}</div>
             </div>
           </div>
