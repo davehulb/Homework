@@ -30,14 +30,30 @@ function calcStreak(completions, tasks) {
     if (!byDate[c.date]) byDate[c.date] = new Set();
     byDate[c.date].add(c.taskId);
   }
+
+  const isComplete = (ds) => {
+    const done = byDate[ds];
+    return done && taskIds.every(id => done.has(id));
+  };
+
   let streak = 0;
   const today = new Date();
+  const todayStr = today.toISOString().slice(0, 10);
+
   for (let i = 0; i < 365; i++) {
     const d = new Date(today);
     d.setDate(today.getDate() - i);
+    const day = d.getDay(); // 0 = Sun, 6 = Sat
+
+    // Weekends don't count for or against the streak
+    if (day === 0 || day === 6) continue;
+
     const ds = d.toISOString().slice(0, 10);
-    const done = byDate[ds];
-    if (done && taskIds.every(id => done.has(id))) {
+
+    // Today being incomplete doesn't break the streak mid-day
+    if (ds === todayStr && !isComplete(ds)) continue;
+
+    if (isComplete(ds)) {
       streak++;
     } else {
       break;
@@ -48,9 +64,9 @@ function calcStreak(completions, tasks) {
 
 export const BADGE_DEFS = [
   { id: 'first_task',   emoji: '⭐', name: 'First Star',    desc: 'Completed your very first task!' },
-  { id: 'streak_3',     emoji: '🔥', name: 'On Fire!',       desc: '3 days in a row — amazing!' },
-  { id: 'streak_7',     emoji: '🦄', name: 'Unicorn Week',   desc: '7 days in a row — magical!' },
-  { id: 'streak_14',    emoji: '👑', name: 'Queen Iris',     desc: '14 days in a row — royalty!' },
+  { id: 'streak_3',     emoji: '🔥', name: 'On Fire!',       desc: '3 weekdays in a row — amazing!' },
+  { id: 'streak_7',     emoji: '🦄', name: 'Unicorn Week',   desc: '7 weekdays in a row — magical!' },
+  { id: 'streak_14',    emoji: '👑', name: 'Queen Iris',     desc: '14 weekdays in a row — royalty!' },
   { id: 'points_50',    emoji: '💫', name: 'Star Collector', desc: 'Earned 50 stars total!' },
   { id: 'points_100',   emoji: '🌟', name: 'Superstar',      desc: 'Earned 100 stars total!' },
   { id: 'points_500',   emoji: '✨', name: 'Galaxy Iris',    desc: 'Earned 500 stars total!' },
