@@ -8,11 +8,9 @@ createRoot(document.getElementById('root')).render(
   </StrictMode>,
 )
 
-// Register service worker for PWA / offline support
-if ('serviceWorker' in navigator) {
+// Service worker only makes sense when served over HTTP, not file://
+if ('serviceWorker' in navigator && location.protocol !== 'file:') {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {
-      // SW registration failing silently is fine in dev
-    });
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
   });
 }
