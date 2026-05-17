@@ -1,10 +1,9 @@
 const CACHE = 'homework-hero-v2';
-const BASE  = new URL('./', self.location).pathname; // e.g. /Homework/
 
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE).then(cache =>
-      cache.addAll([BASE, BASE + 'index.html', BASE + 'manifest.json'])
+      cache.addAll(['/', '/index.html', '/manifest.json'])
     )
   );
   self.skipWaiting();
@@ -29,7 +28,7 @@ self.addEventListener('fetch', e => {
           caches.open(CACHE).then(c => c.put(request, res.clone()));
           return res;
         })
-        .catch(() => caches.match(BASE + 'index.html'))
+        .catch(() => caches.match('/index.html'))
     );
     return;
   }
